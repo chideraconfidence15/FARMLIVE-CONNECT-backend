@@ -1,0 +1,84 @@
+[
+  {
+    "id": "user-amaka",
+    "name": "Amaka Okafor",
+    "email": "amaka.okafor@example.com",
+    "password": "password123",
+    "role": "customer",
+    "createdAt": "2026-09-20T10:00:00.000Z"
+  },
+  {
+    "id": "user-mugw3ya8",
+    "name": "Chioma Adebayo",
+    "email": "chioma@example.com",
+    "password": "securepassword99",
+    "role": "farmer",
+    "createdAt": "2026-09-25T11:41:11.120Z"
+  },
+  {
+    "id": "user-muh27i7a-890",
+    "name": "Chidera Confidence",
+    "firstname": "Chidera",
+    "lastname": "Confidence",
+    "email": "chidera.test@farmlive.ng",
+    "password": "password123",
+    "role": "customer",
+    "emailVerification": true,
+    "createdAt": "2026-09-25T14:31:54.636Z"
+  },
+  {
+    "id": "user-muimejgx-553",
+    "name": "victor  ajala",
+    "firstname": "victor",
+    "lastname": " ajala",
+    "email": "victoraj@gmail.com",
+    "password": "76565334567885",
+    "role": "farmer",
+    "emailVerification": true,
+    "createdAt": "2026-09-26T16:45:01.330Z"
+  },
+  {
+    "id": "user-munx19w7-892",
+    "name": "Confidence Chidera",
+    "firstname": "Confidence",
+    "lastname": "Chidera",
+    "email": "chideraconfidence15@gmail.com",
+    "password": "Dera4394@",
+    "role": "admin",
+    "emailVerification": true,
+    "createdAt": "2026-09-30T09:41:29.049Z"
+  },
+  {
+    "id": "user-munygy2b-666",
+    "name": "mercy godwin",
+    "firstname": "mercy",
+    "lastname": "godwin",
+    "email": "mercygodwin45@gmail.com",
+    "password": "8676543ytgv543ws",
+    "role": "customer",
+    "emailVerification": true,
+    "createdAt": "2026-09-30T10:21:39.829Z"
+  },
+  {
+    "id": "user-muo3fh1q-891",
+    "name": "horlamide michael",
+    "firstname": "horlamide",
+    "lastname": "michael",
+    "email": "horlatech2020web@gmail.com",
+    "password": "7654362gdhvhc",
+    "role": "customer",
+    "emailVerification": true,
+    "createdAt": "2026-09-30T12:40:29.200Z"
+  },
+  {
+    "id": "user-muo42v0u-762",
+    "name": "micheal fikayo",
+    "firstname": "micheal",
+    "lastname": "fikayo",
+    "email": "oluwadamilaremich@gmail.com",
+    "password": "hgfssgb65343",
+    "role": "admin",
+    "emailVerification": true,
+    "createdAt": "2026-09-30T12:58:40.400Z"
+  }
+]

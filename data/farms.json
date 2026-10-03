@@ -1,0 +1,142 @@
+[
+  {
+    "id": "farm-olam",
+    "farmName": "Olam Agricultural Farms",
+    "location": "Rukubi, Nasarawa",
+    "locationDescription": "Kilometer 45, Rukubi Agro Belt, Nasarawa State",
+    "farmDescription": "One of Africa's largest mechanized integrated rice, poultry, and animal feed estates with state-of-the-art climate-controlled facilities.",
+    "phoneNumber": "08031234567",
+    "website": "https://www.olamgroup.com",
+    "socialMediaHandle": "@olamfarms_ng",
+    "status": "open",
+    "rating": 4.9,
+    "img": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80",
+    "imageId": "farm-olam",
+    "distance": "1.8km",
+    "productTags": [
+      "Verified Producer",
+      "Good Stock Certified",
+      "Cold Chain Logistics"
+    ]
+  },
+  {
+    "id": "farm-sebore",
+    "farmName": "Sebore Export Farms",
+    "location": "Mayo-Belwa, Adamawa",
+    "locationDescription": "Sebore Farmlands, Mayo-Belwa, Adamawa State",
+    "farmDescription": "Leading commercial dairy farm, pedigree Balami/Yankasa sheep studs, and certified organic horticultural producer.",
+    "phoneNumber": "08029876543",
+    "website": "https://seborefarms.com",
+    "socialMediaHandle": "@seborefarms",
+    "status": "open",
+    "rating": 4.8,
+    "img": "https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=700&q=80",
+    "imageId": "farm-sebore",
+    "distance": "3.2km",
+    "productTags": [
+      "Dairy Genetics",
+      "Purebred Studs",
+      "Export Grade"
+    ]
+  },
+  {
+    "id": "farm-shonga",
+    "farmName": "Shonga Commercial Farm Holdings",
+    "location": "Edu, Kwara",
+    "locationDescription": "Shonga Agro Corridor, Edu LGA, Kwara State",
+    "farmDescription": "Consortium of high-yield commercial dairy, poultry broiler breeders, and extensive cassava processing facilities.",
+    "phoneNumber": "08055554321",
+    "website": "https://shongafarms.org",
+    "socialMediaHandle": "@shongafarms",
+    "status": "open",
+    "rating": 4.7,
+    "img": "https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=700&q=80",
+    "imageId": "farm-shonga",
+    "distance": "2.4km",
+    "productTags": [
+      "Poultry Breeders",
+      "Fresh Dairy",
+      "Mechanized"
+    ]
+  },
+  {
+    "id": "farm-chi",
+    "farmName": "Chi Farms Limited",
+    "location": "Ajanla, Ibadan / Lagos",
+    "locationDescription": "Km 20 Ibadan-Lagos Expressway, Oyo State",
+    "farmDescription": "Pioneers in Grandparent poultry breeding stock, Clarias catfish aquaculture hatchery, and veterinary-supervised meat processing.",
+    "phoneNumber": "08012344321",
+    "website": "https://chifarms.com",
+    "socialMediaHandle": "@chifarmsng",
+    "status": "open",
+    "rating": 5,
+    "img": "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=700&q=80",
+    "imageId": "farm-chi",
+    "distance": "1.2km",
+    "productTags": [
+      "Day-Old Chicks",
+      "Catfish Juveniles",
+      "ISO Certified"
+    ]
+  },
+  {
+    "id": "farm-songhai",
+    "farmName": "Songhai Integrated Organic Farm",
+    "location": "Amukpe / Rivers & Delta",
+    "locationDescription": "Songhai Centre Road, Sapele Delta / Rivers State",
+    "farmDescription": "Zero-waste circular agro-ecology model producing chemical-free vegetables, organic snails, free-range poultry, and fish fingerlings.",
+    "phoneNumber": "08099887766",
+    "website": "https://songhai.org",
+    "socialMediaHandle": "@songhai_nigeria",
+    "status": "open",
+    "rating": 4.9,
+    "img": "https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=700&q=80",
+    "imageId": "farm-songhai",
+    "distance": "2.9km",
+    "productTags": [
+      "100% Organic",
+      "Zero Waste",
+      "Fresh Fingerlings"
+    ]
+  },
+  {
+    "id": "farm-agrited",
+    "farmName": "Agrited Hatchery & Livestock Hub",
+    "location": "Oyo / Ogun Agro Axis",
+    "locationDescription": "Old Lagos-Ibadan Road, Oyo State",
+    "farmDescription": "Premium day-old broiler and layer breeding facilities delivering top biosecurity vaccinated birds across West Africa.",
+    "phoneNumber": "08033445566",
+    "website": "https://agrited.com",
+    "socialMediaHandle": "@agritedng",
+    "status": "open",
+    "rating": 4.8,
+    "img": "https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=700&q=80",
+    "imageId": "farm-agrited",
+    "distance": "3.5km",
+    "productTags": [
+      "Poultry Genetics",
+      "Vaccinated",
+      "Fast Delivery"
+    ]
+  },
+  {
+    "id": "farm-animalcare",
+    "farmName": "Animal Care Services Konsult",
+    "location": "Ogere-Remo, Ogun State",
+    "locationDescription": "Km 62 Lagos-Ibadan Expressway, Ogere, Ogun",
+    "farmDescription": "Nigeria's leading veterinary health provider, egg production powerhouse, and commercial livestock nutrition specialists.",
+    "phoneNumber": "08088889900",
+    "website": "https://animalcare-ng.com",
+    "socialMediaHandle": "@animalcareng",
+    "status": "open",
+    "rating": 4.9,
+    "img": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=700&q=80",
+    "imageId": "farm-animalcare",
+    "distance": "2.1km",
+    "productTags": [
+      "Veterinary Passport",
+      "Fresh Eggs",
+      "Top Health Standard"
+    ]
+  }
+]
