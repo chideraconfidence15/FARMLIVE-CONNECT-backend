@@ -21,14 +21,10 @@ process.on('unhandledRejection', (reason) => {
 
 const app = express()
 const PORT = process.env.PORT || 5000
-const allowedOrigins = (process.env.CORS_ORIGINS || '')
-  .split(',')
-  .map((origin) => origin.trim().replace(/\/$/, ''))
-  .filter(Boolean)
 
 // Middlewares
 app.use(cors({
-  origin: allowedOrigins.length ? allowedOrigins : true,
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 }))
 app.use(express.json({ limit: '10mb' }))
