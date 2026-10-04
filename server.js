@@ -21,6 +21,7 @@ process.on('unhandledRejection', (reason) => {
 
 const app = express()
 const PORT = process.env.PORT || 5000
+let databaseReady
 
 // Middlewares
 app.use(cors({
@@ -40,6 +41,13 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 // Root redirect to docs
 app.get('/', (req, res) => {
   res.redirect('/api/docs')
+})
+
+app.use('/api', (req, res, next) => {
+  if (!process.env.VERCEL) return next()
+
+  databaseReady ??= connectDB()
+  databaseReady.then(() => next(), next)
 })
 
 // REST API Routes
@@ -74,4 +82,8 @@ async function startServer() {
   server.keepAliveTimeout = 65000
 }
 
-startServer()
+export default app
+
+if (!process.env.VERCEL) {
+  startServer()
+}

@@ -11,8 +11,8 @@ export const swaggerSpec = {
   },
   servers: [
     {
-      url: 'http://localhost:5000',
-      description: 'Local Backend Server'
+      url: '/',
+      description: 'Current API deployment'
     }
   ],
   paths: {
