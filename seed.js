@@ -12,6 +12,7 @@ import { Farm } from './models/Farm.js'
 import { Category } from './models/Category.js'
 import { Order } from './models/Order.js'
 import { User } from './models/User.js'
+import { prepareMongoDocuments } from './services/mongoDocument.js'
 
 dotenv.config()
 
@@ -39,35 +40,35 @@ async function runSeed() {
     console.log(`\n🏷️ Syncing ${fileCategories.length} categories...`)
     await Category.deleteMany({})
     if (fileCategories.length > 0) {
-      await Category.insertMany(fileCategories)
+      await Category.insertMany(prepareMongoDocuments(fileCategories))
     }
     console.log(`✓ Inserted ${fileCategories.length} categories.`)
 
     console.log(`\n🏡 Syncing ${fileFarms.length} farms...`)
     await Farm.deleteMany({})
     if (fileFarms.length > 0) {
-      await Farm.insertMany(fileFarms)
+      await Farm.insertMany(prepareMongoDocuments(fileFarms))
     }
     console.log(`✓ Inserted ${fileFarms.length} farms.`)
 
     console.log(`\n📦 Syncing ${fileProducts.length} products / livestock...`)
     await Product.deleteMany({})
     if (fileProducts.length > 0) {
-      await Product.insertMany(fileProducts)
+      await Product.insertMany(prepareMongoDocuments(fileProducts))
     }
     console.log(`✓ Inserted ${fileProducts.length} products.`)
 
     console.log(`\n👤 Syncing ${fileUsers.length} user accounts...`)
     await User.deleteMany({})
     if (fileUsers.length > 0) {
-      await User.insertMany(fileUsers)
+      await User.insertMany(prepareMongoDocuments(fileUsers))
     }
     console.log(`✓ Inserted ${fileUsers.length} users.`)
 
     console.log(`\n📝 Syncing ${fileOrders.length} order records...`)
     await Order.deleteMany({})
     if (fileOrders.length > 0) {
-      await Order.insertMany(fileOrders)
+      await Order.insertMany(prepareMongoDocuments(fileOrders))
     }
     console.log(`✓ Inserted ${fileOrders.length} orders.`)
 

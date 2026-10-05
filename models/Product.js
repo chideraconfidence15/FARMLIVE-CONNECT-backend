@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema(
     imageId: { type: String, default: 'placeholder' },
     species: { type: String, default: '', trim: true },
     breed: { type: String, default: '', trim: true },
-    origin: { type: String, enum: ['local', 'foreign', 'produce'], default: 'local' },
+    origin: { type: String, enum: ['local', 'foreign', 'produce', 'cross'], default: 'local' },
     group: { type: String, enum: ['livestock', 'pets', 'produce', 'all'], default: 'livestock' },
     category: { type: String, default: 'all' },
     place: { type: String, default: '' },

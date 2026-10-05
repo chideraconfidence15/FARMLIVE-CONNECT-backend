@@ -6,6 +6,7 @@ import { Farm } from '../models/Farm.js'
 import { Category } from '../models/Category.js'
 import { Order } from '../models/Order.js'
 import { User } from '../models/User.js'
+import { prepareMongoDocuments } from '../services/mongoDocument.js'
 
 dotenv.config()
 
@@ -31,35 +32,35 @@ export async function seedMongoDBIfEmpty() {
     const categoryCount = await Category.countDocuments()
     if (categoryCount === 0) {
       const cats = readCategories()
-      if (cats.length > 0) await Category.insertMany(cats)
+      if (cats.length > 0) await Category.insertMany(prepareMongoDocuments(cats))
       console.log(`🍃 [MongoDB] Seeded ${cats.length} categories.`)
     }
 
     const farmCount = await Farm.countDocuments()
     if (farmCount === 0) {
       const farms = readFarms()
-      if (farms.length > 0) await Farm.insertMany(farms)
+      if (farms.length > 0) await Farm.insertMany(prepareMongoDocuments(farms))
       console.log(`🍃 [MongoDB] Seeded ${farms.length} farms.`)
     }
 
     const productCount = await Product.countDocuments()
     if (productCount === 0) {
       const prods = readProducts()
-      if (prods.length > 0) await Product.insertMany(prods)
+      if (prods.length > 0) await Product.insertMany(prepareMongoDocuments(prods))
       console.log(`🍃 [MongoDB] Seeded ${prods.length} products.`)
     }
 
     const userCount = await User.countDocuments()
     if (userCount === 0) {
       const users = readUsers()
-      if (users.length > 0) await User.insertMany(users)
+      if (users.length > 0) await User.insertMany(prepareMongoDocuments(users))
       console.log(`🍃 [MongoDB] Seeded ${users.length} users.`)
     }
 
     const orderCount = await Order.countDocuments()
     if (orderCount === 0) {
       const orders = readOrders()
-      if (orders.length > 0) await Order.insertMany(orders)
+      if (orders.length > 0) await Order.insertMany(prepareMongoDocuments(orders))
       console.log(`🍃 [MongoDB] Seeded ${orders.length} orders.`)
     }
   } catch (err) {
