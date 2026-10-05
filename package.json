@@ -6,7 +6,8 @@
     "start": "node server.js",
     "dev": "node server.js",
     "seed": "node seed.js",
-    "db:seed": "node seed.js"
+    "db:seed": "node seed.js",
+    "admin:promote": "node promote-admin.js"
   },
   "dependencies": {
     "@getbrevo/brevo": "^6.0.3",
