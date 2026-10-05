@@ -23,9 +23,10 @@ function getBrevoClient() {
 }
 
 export function getSender() {
+  const configuredEmail = process.env.BREVO_SENDER_EMAIL || 'notifications@farmlive.ng'
   return {
     name: process.env.BREVO_SENDER_NAME || 'FARMLIVE Hub',
-    email: process.env.BREVO_SENDER_EMAIL || 'notifications@farmlive.ng'
+    email: configuredEmail.trim().replace(/^<|>$/g, '')
   }
 }
 

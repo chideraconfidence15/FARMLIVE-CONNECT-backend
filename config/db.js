@@ -11,7 +11,7 @@ dotenv.config()
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/farmlive'
 
-let isConnecting = false
+let connectionPromise = null
 let hasAttemptedInitialConnection = false
 
 /**
@@ -71,34 +71,34 @@ export async function seedMongoDBIfEmpty() {
  * Connect to MongoDB with non-blocking timeout resilience
  */
 export async function connectDB() {
-  if (isMongoConnected() || isConnecting) {
+  if (isMongoConnected()) {
     return mongoose.connection
   }
+  if (connectionPromise) return connectionPromise
 
-  isConnecting = true
   hasAttemptedInitialConnection = true
+  connectionPromise = (async () => {
+    try {
+      console.log('🍃 [MongoDB] Connecting to configured MongoDB database')
 
-  try {
-    const safeUri = MONGODB_URI.replace(/:([^:@]+)@/, ':****@')
-    console.log(`🍃 [MongoDB] Connecting to: ${safeUri}`)
+      await mongoose.connect(MONGODB_URI, {
+        serverSelectionTimeoutMS: 8000,
+        connectTimeoutMS: 8000
+      })
 
-    await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 2000,
-      connectTimeoutMS: 3000
-    })
+      console.log(`✅ [MongoDB] Successfully connected to database "${mongoose.connection.name}"!`)
+      await seedMongoDBIfEmpty()
+      return mongoose.connection
+    } catch (err) {
+      console.warn(`⚠️  [MongoDB Notice] Could not connect to MongoDB (${err.name || 'Error'}): ${err.message}`)
+      console.warn('👉 [Resilient Mode] Using file persistence for this request; a later request will retry MongoDB.')
+      return null
+    } finally {
+      connectionPromise = null
+    }
+  })()
 
-    console.log(`✅ [MongoDB] Successfully connected to database "${mongoose.connection.name}"!`)
-    isConnecting = false
-
-    await seedMongoDBIfEmpty()
-    return mongoose.connection
-  } catch (err) {
-    isConnecting = false
-    const safeUri = MONGODB_URI.replace(/:([^:@]+)@/, ':****@')
-    console.warn(`\n⚠️  [MongoDB Notice] Could not connect to MongoDB at ${safeUri}: ${err.message}`)
-    console.warn(`👉 [Resilient Mode] FARMLIVE will operate seamlessly using local file persistence (backend/data/*.json) until MongoDB is active.\n`)
-    return null
-  }
+  return connectionPromise
 }
 
 // Global connection event handlers (Prevent EventEmitter uncaughtException)

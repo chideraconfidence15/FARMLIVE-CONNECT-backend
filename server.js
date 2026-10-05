@@ -21,7 +21,6 @@ process.on('unhandledRejection', (reason) => {
 
 const app = express()
 const PORT = process.env.PORT || 5000
-let databaseReady
 
 // Middlewares
 app.use(cors({
@@ -46,8 +45,7 @@ app.get('/', (req, res) => {
 app.use('/api', (req, res, next) => {
   if (!process.env.VERCEL) return next()
 
-  databaseReady ??= connectDB()
-  databaseReady.then(() => next(), next)
+  connectDB().then(() => next(), next)
 })
 
 // REST API Routes
