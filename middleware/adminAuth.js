@@ -6,14 +6,21 @@ import { readUsers } from '../services/storageService.js'
 
 dotenv.config()
 
-const tokenSecret = process.env.AUTH_TOKEN_SECRET || randomBytes(32).toString('hex')
+const tokenSecret = process.env.AUTH_TOKEN_SECRET?.trim() || (process.env.VERCEL ? '' : randomBytes(32).toString('hex'))
 const TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7
+
+export function isAuthTokenConfigured() {
+  return tokenSecret.length >= 32
+}
 
 function encode(value) {
   return Buffer.from(JSON.stringify(value)).toString('base64url')
 }
 
 function sign(value) {
+  if (!isAuthTokenConfigured()) {
+    throw new Error('AUTH_TOKEN_SECRET must be set to a stable secret of at least 32 characters in production.')
+  }
   return createHmac('sha256', tokenSecret).update(value).digest('base64url')
 }
 
@@ -28,6 +35,7 @@ export function createAccessToken(user) {
 }
 
 function verifyAccessToken(token) {
+  if (!isAuthTokenConfigured()) return null
   const [version, payload, signature, extra] = token.split('.')
   if (version !== 'v1' || !payload || !signature || extra) return null
 
@@ -61,6 +69,9 @@ async function loadAuthenticatedUser(req) {
 }
 
 export async function requireAuthentication(req, res, next) {
+  if (!isAuthTokenConfigured()) {
+    return res.status(503).json({ error: 'Authentication is unavailable. Configure AUTH_TOKEN_SECRET in the backend deployment.' })
+  }
   try {
     const user = await loadAuthenticatedUser(req)
     if (!user) return res.status(401).json({ error: 'Please sign in again to continue.' })
@@ -71,6 +82,9 @@ export async function requireAuthentication(req, res, next) {
 }
 
 export async function requireAdmin(req, res, next) {
+  if (!isAuthTokenConfigured()) {
+    return res.status(503).json({ error: 'Authentication is unavailable. Configure AUTH_TOKEN_SECRET in the backend deployment.' })
+  }
   try {
     const user = await loadAuthenticatedUser(req)
     if (!user) return res.status(401).json({ error: 'Please sign in again to continue.' })

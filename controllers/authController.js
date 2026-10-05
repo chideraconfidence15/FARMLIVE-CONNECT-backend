@@ -4,7 +4,7 @@ import { User } from '../models/User.js'
 import { isMongoConnected } from '../config/db.js'
 import { readUsers, writeUsers } from '../services/storageService.js'
 import { isBrevoConfigured, sendSignupOtpEmail, sendPasswordResetOtpEmail, sendWelcomeEmail } from '../services/emailService.js'
-import { createAccessToken } from '../middleware/adminAuth.js'
+import { createAccessToken, isAuthTokenConfigured } from '../middleware/adminAuth.js'
 
 const pendingSignups = new Map()
 const OTP_TTL_MS = 10 * 60 * 1000
@@ -134,6 +134,9 @@ export async function register(req, res, next) {
 
 export async function verifySignup(req, res, next) {
   try {
+    if (!isAuthTokenConfigured()) {
+      return res.status(503).json({ error: 'Authentication is unavailable. Configure AUTH_TOKEN_SECRET in the backend deployment.' })
+    }
     const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : ''
     const code = typeof req.body?.code === 'string' ? req.body.code.trim() : ''
     const pending = pendingSignups.get(email)
@@ -301,6 +304,9 @@ export async function confirmPasswordReset(req, res, next) {
 }
 
 export async function loginWithGoogle(req, res, next) {
+  if (!isAuthTokenConfigured()) {
+    return res.status(503).json({ error: 'Authentication is unavailable. Configure AUTH_TOKEN_SECRET in the backend deployment.' })
+  }
   const clientId = process.env.GOOGLE_CLIENT_ID
   const credential = typeof req.body?.credential === 'string' ? req.body.credential : ''
   if (!clientId) return res.status(503).json({ error: 'Google sign-in is not configured on the server.' })
@@ -372,6 +378,9 @@ export async function loginWithGoogle(req, res, next) {
  */
 export async function login(req, res, next) {
   try {
+    if (!isAuthTokenConfigured()) {
+      return res.status(503).json({ error: 'Authentication is unavailable. Configure AUTH_TOKEN_SECRET in the backend deployment.' })
+    }
     const { email, password } = req.body
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required to sign in.' })
