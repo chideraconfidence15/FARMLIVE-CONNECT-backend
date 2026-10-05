@@ -9,7 +9,10 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true },
     role: { type: String, enum: ['customer', 'farmer', 'admin'], default: 'customer' },
-    emailVerification: { type: Boolean, default: true }
+    emailVerification: { type: Boolean, default: true },
+    passwordResetCodeHash: { type: String, select: false },
+    passwordResetExpiresAt: { type: Date, select: false },
+    passwordResetAttempts: { type: Number, default: 0, select: false }
   },
   {
     timestamps: true,
@@ -19,6 +22,9 @@ const userSchema = new mongoose.Schema(
         ret._id = ret.id
         delete ret.__v
         delete ret.password
+        delete ret.passwordResetCodeHash
+        delete ret.passwordResetExpiresAt
+        delete ret.passwordResetAttempts
         return ret
       }
     }

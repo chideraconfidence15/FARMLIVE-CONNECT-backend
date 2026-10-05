@@ -6,6 +6,8 @@ import {
   loginWithGoogle,
   verifySignup,
   resendSignupCode,
+  requestPasswordReset,
+  confirmPasswordReset,
   getMe,
   logout,
   verifyEmail,
@@ -22,6 +24,8 @@ authRouter.post('/login', login)
 authRouter.post('/google', loginWithGoogle)
 authRouter.post('/verify-signup', verifySignup)
 authRouter.post('/resend-signup-code', resendSignupCode)
+authRouter.post('/password-reset/request', requestPasswordReset)
+authRouter.post('/password-reset/confirm', confirmPasswordReset)
 authRouter.get('/me', requireAuthentication, getMe)
 authRouter.post('/logout', logout)
 authRouter.post('/verify', verifyEmail)

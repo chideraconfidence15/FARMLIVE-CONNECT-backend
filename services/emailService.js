@@ -192,6 +192,25 @@ export async function sendSignupOtpEmail(email, name, code) {
   })
 }
 
+export async function sendPasswordResetOtpEmail(email, name, code) {
+  const subject = 'Your FARMLIVE password reset code'
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 24px auto; color: #173f2b;">
+      <h2>Reset your FARMLIVE password</h2>
+      <p>Hello ${name || 'there'}, use this code to reset your password:</p>
+      <p style="font-size: 32px; font-weight: 700; letter-spacing: 6px;">${code}</p>
+      <p>This code expires in 10 minutes. If you did not request a reset, you can ignore this email.</p>
+    </div>
+  `
+  return sendEmail({
+    to: email,
+    toName: name,
+    subject,
+    htmlContent,
+    textContent: `Your FARMLIVE password reset code is ${code}. It expires in 10 minutes.`
+  })
+}
+
 /**
  * Order Confirmation Email Template sent upon placing an order
  */

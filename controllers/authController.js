@@ -3,17 +3,25 @@ import { OAuth2Client } from 'google-auth-library'
 import { User } from '../models/User.js'
 import { isMongoConnected } from '../config/db.js'
 import { readUsers, writeUsers } from '../services/storageService.js'
-import { isBrevoConfigured, sendSignupOtpEmail, sendWelcomeEmail } from '../services/emailService.js'
+import { isBrevoConfigured, sendSignupOtpEmail, sendPasswordResetOtpEmail, sendWelcomeEmail } from '../services/emailService.js'
 import { createAccessToken } from '../middleware/adminAuth.js'
 
 const pendingSignups = new Map()
 const OTP_TTL_MS = 10 * 60 * 1000
 const OTP_RESEND_MS = 60 * 1000
 const OTP_MAX_ATTEMPTS = 5
+const PASSWORD_RESET_TTL_MS = 10 * 60 * 1000
+const PASSWORD_RESET_MAX_ATTEMPTS = 5
 
 function formatUser(u) {
   if (!u) return null
-  const { password, ...safeUser } = u
+  const {
+    password,
+    passwordResetCodeHash,
+    passwordResetExpiresAt,
+    passwordResetAttempts,
+    ...safeUser
+  } = u
   const id = u.id || u._id || u.$id
   const name = u.name || `${u.firstname || ''} ${u.lastname || ''}`.trim() || 'User'
   return {
@@ -175,6 +183,118 @@ export async function resendSignupCode(req, res, next) {
     const result = await sendSignupCode(pending.signup)
     if (result.error) return res.status(503).json({ error: result.error })
     return res.status(200).json({ success: true, message: 'A new verification code has been sent.' })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function requestPasswordReset(req, res, next) {
+  try {
+    const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : ''
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Enter a valid email address.' })
+    }
+    if (!isBrevoConfigured()) {
+      return res.status(503).json({ error: 'Password recovery email is currently unavailable. Please try again later.' })
+    }
+
+    const user = await findUserByEmail(email)
+    const response = { success: true, message: 'If an account exists for that email, a reset code has been sent.' }
+    if (!user) return res.status(200).json(response)
+
+    const code = String(randomInt(0, 1_000_000)).padStart(6, '0')
+    const codeHash = hashOtp(code).toString('hex')
+    const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MS)
+
+    if (isMongoConnected()) {
+      await User.updateOne({ email }, {
+        $set: {
+          passwordResetCodeHash: codeHash,
+          passwordResetExpiresAt: expiresAt,
+          passwordResetAttempts: 0
+        }
+      })
+    } else {
+      const users = readUsers().map((entry) => entry.email.toLowerCase() === email
+        ? { ...entry, passwordResetCodeHash: codeHash, passwordResetExpiresAt: expiresAt.toISOString(), passwordResetAttempts: 0 }
+        : entry)
+      writeUsers(users)
+    }
+
+    const delivery = await sendPasswordResetOtpEmail(email, user.name, code)
+    if (!delivery.success || delivery.simulated) {
+      if (isMongoConnected()) {
+        await User.updateOne({ email, passwordResetCodeHash: codeHash }, {
+          $unset: { passwordResetCodeHash: 1, passwordResetExpiresAt: 1, passwordResetAttempts: 1 }
+        })
+      } else {
+        const users = readUsers().map((entry) => {
+          if (entry.email.toLowerCase() !== email) return entry
+          const { passwordResetCodeHash, passwordResetExpiresAt, passwordResetAttempts, ...safeEntry } = entry
+          return safeEntry
+        })
+        writeUsers(users)
+      }
+      return res.status(503).json({ error: 'Could not send the reset code. Please try again later.' })
+    }
+
+    return res.status(200).json(response)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function confirmPasswordReset(req, res, next) {
+  try {
+    const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : ''
+    const code = typeof req.body?.code === 'string' ? req.body.code.trim() : ''
+    const password = typeof req.body?.password === 'string' ? req.body.password.trim() : ''
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Enter a valid email address.' })
+    }
+    if (!/^\d{6}$/.test(code)) return res.status(400).json({ error: 'Enter the six-digit reset code.' })
+    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters long.' })
+
+    const codeHash = hashOtp(code).toString('hex')
+    if (isMongoConnected()) {
+      const user = await User.findOne({ email }).select('+passwordResetCodeHash +passwordResetExpiresAt +passwordResetAttempts')
+      if (!user || !user.passwordResetExpiresAt || user.passwordResetExpiresAt.getTime() < Date.now() || user.passwordResetAttempts >= PASSWORD_RESET_MAX_ATTEMPTS) {
+        return res.status(400).json({ error: 'That reset code is invalid or expired. Request a new one.' })
+      }
+      if (!timingSafeEqual(Buffer.from(user.passwordResetCodeHash, 'hex'), Buffer.from(codeHash, 'hex'))) {
+        await User.updateOne({ _id: user._id, passwordResetAttempts: { $lt: PASSWORD_RESET_MAX_ATTEMPTS } }, { $inc: { passwordResetAttempts: 1 } })
+        return res.status(400).json({ error: 'That reset code is invalid or expired. Request a new one.' })
+      }
+
+      const update = await User.updateOne({
+        _id: user._id,
+        passwordResetCodeHash: codeHash,
+        passwordResetExpiresAt: { $gt: new Date() },
+        passwordResetAttempts: { $lt: PASSWORD_RESET_MAX_ATTEMPTS }
+      }, {
+        $set: { password },
+        $unset: { passwordResetCodeHash: 1, passwordResetExpiresAt: 1, passwordResetAttempts: 1 }
+      })
+      if (update.modifiedCount !== 1) return res.status(400).json({ error: 'That reset code is invalid or expired. Request a new one.' })
+    } else {
+      const users = readUsers()
+      const user = users.find((entry) => entry.email.toLowerCase() === email)
+      if (!user || !user.passwordResetCodeHash || !user.passwordResetExpiresAt || new Date(user.passwordResetExpiresAt).getTime() < Date.now() || user.passwordResetAttempts >= PASSWORD_RESET_MAX_ATTEMPTS) {
+        return res.status(400).json({ error: 'That reset code is invalid or expired. Request a new one.' })
+      }
+      if (!timingSafeEqual(Buffer.from(user.passwordResetCodeHash, 'hex'), Buffer.from(codeHash, 'hex'))) {
+        user.passwordResetAttempts = (user.passwordResetAttempts || 0) + 1
+        writeUsers(users)
+        return res.status(400).json({ error: 'That reset code is invalid or expired. Request a new one.' })
+      }
+      user.password = password
+      delete user.passwordResetCodeHash
+      delete user.passwordResetExpiresAt
+      delete user.passwordResetAttempts
+      writeUsers(users)
+    }
+
+    return res.status(200).json({ success: true, message: 'Password reset successfully. You can now sign in.' })
   } catch (err) {
     next(err)
   }
