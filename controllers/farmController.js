@@ -9,7 +9,8 @@ export async function getAllFarms(req, res, next) {
   try {
     if (isMongoConnected()) {
       const farms = await Farm.find().sort({ createdAt: -1 })
-      return res.status(200).json(farms)
+      if (farms.length > 0) return res.status(200).json(farms)
+      return res.status(200).json(readFarms())
     }
 
     const farms = readFarms()

@@ -68,11 +68,19 @@ export async function getAllProducts(req, res, next) {
       if (origin && origin !== 'all') query.origin = origin
       list = await Product.find(query).sort({ createdAt: -1 })
       list = list.map((doc) => doc.toJSON())
+      if (list.length === 0) list = readProducts()
     } else {
       list = readProducts()
     }
 
     let formatted = list.map(formatProduct)
+
+    if (group && group !== 'all') {
+      formatted = formatted.filter((product) => product.group === group)
+    }
+    if (origin && origin !== 'all') {
+      formatted = formatted.filter((product) => product.origin === origin)
+    }
 
     // Filter by farm if supplied
     if (farmId || farm) {

@@ -9,7 +9,8 @@ export async function getAllCategories(req, res, next) {
   try {
     if (isMongoConnected()) {
       const categories = await Category.find().sort({ name: 1 })
-      return res.status(200).json(categories)
+      if (categories.length > 0) return res.status(200).json(categories)
+      return res.status(200).json(readCategories())
     }
 
     const categories = readCategories()
