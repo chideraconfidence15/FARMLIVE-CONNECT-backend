@@ -10,8 +10,8 @@ export function getEmailStatus(req, res) {
     configured: isBrevoConfigured(),
     sender: getSender(),
     note: isBrevoConfigured()
-      ? 'Brevo API is configured and active for live transactional email delivery.'
-      : 'Brevo API key not set or using placeholder in .env. Running in console-logged simulation mode.'
+      ? 'Brevo API key and sender address are configured. Confirm the sender is verified in Brevo for delivery.'
+      : 'Check BREVO_API_KEY and BREVO_SENDER_EMAIL. A valid sender address and API key are required for live delivery.'
   })
 }
 

@@ -3,17 +3,29 @@ import { BrevoClient } from '@getbrevo/brevo'
 
 dotenv.config()
 
+function getSenderEmail() {
+  const configuredEmail = (process.env.BREVO_SENDER_EMAIL || 'notifications@farmlive.ng').trim()
+  return configuredEmail.replace(/^<\s*([^<>]+?)\s*>$/, '$1').trim()
+}
+
+function isValidEmailAddress(email) {
+  return /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email)
+}
+
 /**
  * Check if a valid Brevo API key is present in environment
  */
 export function isBrevoConfigured() {
   const key = process.env.BREVO_API_KEY
+  const hasConfiguredSender = Boolean(process.env.BREVO_SENDER_EMAIL?.trim())
   return Boolean(
     key &&
     key.trim() !== '' &&
     !key.includes('your_') &&
     !key.includes('placeholder') &&
-    key.length > 15
+    key.length > 15 &&
+    hasConfiguredSender &&
+    isValidEmailAddress(getSenderEmail())
   )
 }
 
@@ -23,10 +35,9 @@ function getBrevoClient() {
 }
 
 export function getSender() {
-  const configuredEmail = process.env.BREVO_SENDER_EMAIL || 'notifications@farmlive.ng'
   return {
     name: process.env.BREVO_SENDER_NAME || 'FARMLIVE Hub',
-    email: configuredEmail.trim().replace(/^<|>$/g, '')
+    email: getSenderEmail()
   }
 }
 
